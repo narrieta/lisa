@@ -384,12 +384,15 @@ class Posix(OperatingSystem, BaseClassMixin):
         from lisa.tools import Chmod, Find
 
         find_tool = self._node.tools[Find]
-        file_list = find_tool.find_files(
-            self._node.get_pure_path("/var/log/azure/"),
-            file_type="f",
-            sudo=True,
-            ignore_not_exist=True,
-        )
+        if self._node.name == "local":
+            file_list = []
+        else:
+            file_list = find_tool.find_files(
+                self._node.get_pure_path("/var/log/azure/"),
+                file_type="f",
+                sudo=True,
+                ignore_not_exist=True,
+            )
         if len(file_list) > 0:
             self._node.tools[Chmod].update_folder("/var/log/azure/", "a+rwX", sudo=True)
         file_list.append("/etc/os-release")
